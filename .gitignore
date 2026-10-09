@@ -15,3 +15,7 @@ public/
 
 # Local Netlify folder
 .netlify
+
+#New Add
+exercises/Cargo.toml
+exercises/Cargo.lock

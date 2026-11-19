@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -23,7 +22,7 @@ where
     pub fn new(comparator: fn(&T, &T) -> bool) -> Self {
         Self {
             count: 0,
-            items: vec![T::default()],
+            items: vec![T::default()],//本题坑点：默认有一个占位，数组下标从1开始
             comparator,
         }
     }
@@ -38,6 +37,16 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+        self.count += 1;
+        //先加到末尾
+        self.items.push(value);
+        //再上浮
+        let mut i = self.len();//新元素的位置
+        while i > 1 && (self.comparator)(&self.items[i],&self.items[self.parent_idx(i)]) {
+            let parent_idx=self.parent_idx(i);
+            self.items.swap(i, parent_idx);
+            i=parent_idx;
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +67,13 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+		if self.children_present(idx){
+            if self.right_child_idx(idx) <= self.count && (self.comparator)(&self.items[self.right_child_idx(idx)],&self.items[self.left_child_idx(idx)]) {
+                return self.right_child_idx(idx);
+            }
+            return self.left_child_idx(idx);
+        }
+        0
     }
 }
 
@@ -85,7 +100,23 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+        if self.is_empty(){
+            return None;
+        }
+        self.count -= 1;
+        let a = self.items.swap_remove(1);//弹出堆顶
+        //进行下沉操作
+        let mut index = 1;//下沉操作指针
+        while self.children_present(index) {
+            let child=self.smallest_child_idx(index);
+            if (self.comparator)(&self.items[child],&self.items[index]){
+                self.items.swap(child, index);
+                index=child;
+            } else {
+                break;
+            }
+        }
+        Some(a)
     }
 }
 

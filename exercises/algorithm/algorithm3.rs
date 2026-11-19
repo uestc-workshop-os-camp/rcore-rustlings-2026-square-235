@@ -3,11 +3,35 @@
 	This problem requires you to implement a sorting algorithm
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
-// I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
+fn sort<T:PartialOrd>(array: &mut [T]){
 	//TODO
+    if array.len() > 1{
+        _quick_shot(array,0,array.len() - 1);
+    } 
 }
+
+fn _quick_shot<T:PartialOrd>(array:&mut [T],start:usize,end:usize){
+    if start < end {
+        //执行本层排序
+        let mut index = start;
+        //双指针，选末位元素为基准，扫到小的往计数指针位置放
+        for cur in start..end {
+            if array[cur] < array[end] {
+                array.swap(cur, index);
+                index += 1;
+            }
+        }
+        array.swap(index,end);
+
+        //排两侧 
+        if index > start{
+            _quick_shot(array,start,index-1);
+        }
+        _quick_shot(array,index+1,end);
+    } 
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

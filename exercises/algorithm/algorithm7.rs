@@ -3,7 +3,6 @@
 	This question requires you to use a stack to achieve a bracket match
 */
 
-// I AM NOT DONE
 #[derive(Debug)]
 struct Stack<T> {
 	size: usize,
@@ -32,6 +31,10 @@ impl<T> Stack<T> {
 	}
 	fn pop(&mut self) -> Option<T> {
 		// TODO
+		if !self.is_empty() {
+			self.size -= 1;
+			return self.data.pop();
+		}
 		None
 	}
 	fn peek(&self) -> Option<&T> {
@@ -102,7 +105,38 @@ impl<'a, T> Iterator for IterMut<'a, T> {
 fn bracket_match(bracket: &str) -> bool
 {
 	//TODO
-	true
+	let mut chars =Vec::new();
+	for c in bracket.chars(){
+		chars.push(c);
+	}//字符串拆解
+
+	let mut stack = Stack::new();
+	let (mut res,mut index)=(true,0);
+	while res && index < chars.len() {
+		let c = chars[index];
+		if c == '(' || c =='[' || 'c' =='{' {
+			stack.push(c);
+		}
+		if c == ')' || c ==']' || 'c' =='}' {
+			if stack.is_empty() {
+				res = false;
+			} else {
+				let top = stack.pop().unwrap();
+				let mut match_pop = false;
+				if ( top == '(' && c==')' )||( top == '[' && c==']' )||( top == '{' && c=='}' ) {
+					match_pop = true;
+				}
+
+				if !match_pop{
+					res = false;
+				}
+			}
+			
+		}
+		index += 1;
+	}
+
+	res && stack.is_empty()
 }
 
 #[cfg(test)]

@@ -2,9 +2,9 @@
 	graph
 	This problem requires you to implement a basic graph functio
 */
-// I AM NOT DONE
 
 use std::collections::{HashMap, HashSet};
+use std::f32::consts::E;
 use std::fmt;
 #[derive(Debug, Clone)]
 pub struct NodeNotInGraph;
@@ -30,6 +30,25 @@ impl Graph for UndirectedGraph {
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        let (from,to,weight) = edge;
+        if !self.contains(from){
+            self.add_node(from);
+        }
+        if !self.contains(to){
+            self.add_node(to);
+        }
+        let table = self.adjacency_table_mutable();//取可变表
+        let list = table.entry(from.to_string()).or_insert_with(Vec::new);//from的邻接表
+        let exists = list.iter().any(|(string,_)|string.as_str() == to);
+        if !exists {
+            list.push((to.to_string(),weight));
+        }
+        //加反向边
+        let list = table.entry(to.to_string()).or_insert_with(Vec::new);//from的邻接表
+        let exists = list.iter().any(|(string,_)|string.as_str() == from);
+        if !exists {
+            list.push((from.to_string(),weight));
+        }
     }
 }
 pub trait Graph {
@@ -38,10 +57,30 @@ pub trait Graph {
     fn adjacency_table(&self) -> &HashMap<String, Vec<(String, i32)>>;
     fn add_node(&mut self, node: &str) -> bool {
         //TODO
+        let table = self.adjacency_table_mutable();//取可变表
+        table.entry(node.to_string()).or_insert_with(Vec::new);
+        let exists = table.iter().any(|(string,_)|string.as_str() == node);
+        if !exists {
+            return false;
+        }
 		true
     }
     fn add_edge(&mut self, edge: (&str, &str, i32)) {
         //TODO
+        let (from,to,weight) = edge;
+        if !self.contains(from){
+            self.add_node(from);
+        }
+        if !self.contains(to){
+            self.add_node(to);
+        }
+        let table = self.adjacency_table_mutable();//取可变表
+        let list = table.entry(from.to_string()).or_insert_with(Vec::new);//from的邻接表
+        let exists = list.iter().any(|(string,_)|string.as_str() == to);
+        if !exists {
+            list.push((to.to_string(),weight));
+        }
+
     }
     fn contains(&self, node: &str) -> bool {
         self.adjacency_table().get(node).is_some()
